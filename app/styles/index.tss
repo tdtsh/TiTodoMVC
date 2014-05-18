@@ -57,6 +57,17 @@
 'ListItem[platform=ios]': {
 	selectionStyle: Ti.UI.iPhone.ListViewCellSelectionStyle.NONE
 }
+
+'.creates': {
+	top: 0, right: 8, 
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
+	color: "glay",
+	font: {
+		fontSize: '10sp',
+	}
+}
+
 '.toggles': {
 	top: 0,
 	bottom: 0,

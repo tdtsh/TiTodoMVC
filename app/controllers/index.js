@@ -11,8 +11,38 @@ var activestate = 0,
 	toggleall = false;
 
 function todofetch() {
+
+	/*
+	var indicator = Alloy.createController('indicator', {
+		foo: bar
+	}).;
+	*/
+	/*
+	var indicator = Alloy.createController('indicator'),
+		indicatorView = indicator.getView();
+		*/
+	var indicator = Alloy.createController('indicator', {
+		message: 'loading...'
+	});
+
+	indicator.trigger('show', {
+		parent: OS_IOS ? $.window: $index
+	});
+
+	/*
+	var indicatorView = indicator.getView();
+	if (OS_IOS) {
+
+		$.window.add(indicatorView);
+	}
+	else {
+		$.index.add(indicatorView);
+	}
+	*/
+
 	todo.fetch({
 		success: function(_collection){
+
 			var itemsleft = 0;
 			toggleall = false;
 
@@ -29,12 +59,30 @@ function todofetch() {
 			});
 
 			if (OS_IOS) {
+
 				$.window.applyProperties({
 					title: L('todos') + ' - ' + itemsleft + ' ' + L('items_left')
 				});
+
+				//$.window.remove(indicatorView);
+
+
 			} else {
 				$.index.activity.actionBar.title = L('todos') + ' - ' + itemsleft + ' ' + L('items_left');
+				//$.index.remove(indicatorView);
 			}
+			// on off 
+			indicator.trigger('hide');
+
+
+		},
+		error: function() {
+			if (OS_IOS) {
+				//$.window.remove(indicatorView);
+			} else {
+				//$.index.remove(indicatorView);
+			}
+			indicator.trigger('hide');
 		}
 	});
 }
@@ -42,7 +90,23 @@ function todofetch() {
 function doTransform(_model) {
 	var json = _model.toJSON();
 	json.done = parseInt(json.done, 10) === 0 ? '#d9d9d9' : '#85ada7';
+	if (json.updated_at !== '0000/00/00 00:00') {
+		json.timestamp = json.updated_at;
+	}
+	else {
+		json.timestamp = json.created_at;
+	}
+
+	/*
+	var moment = require('moment');
+	var m = moment();
+	m.format("YYYY/MM/DD");
+	*/
+
+	//json.timestamp = moment.json.format("YYYY/MM/DD");
+
 	return json;
+
 }
 
 function doFilter(_collection) {
@@ -122,7 +186,7 @@ function doEdited(e) {
 	var model = todo.get(OS_IOS ? e.source.todoId : e.section.getItemAt(e.itemIndex).todo.todoId);
 	model.set({
 		todo: e.source.getValue(),
-		updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+		updated_at: moment().format('YYYY/MM/DD HH:mm')
 	});
 	model.save(null, {
 		success: function(){

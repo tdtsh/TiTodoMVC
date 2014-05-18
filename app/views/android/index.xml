@@ -14,8 +14,9 @@
 			</HeaderView>
 			<Templates>
 				<ItemTemplate name="todolist">
+					<Label bindId="create" class="creates"/>
 					<Label bindId="done" class="toggles" onClick="doToggle">✓</Label>
-					<TextField bindId="todo" class="todoitem" onDblclick="doEdit" onSwipe="doDelete" onReturn="doEdited"/>
+					<TextField bindId="todo" class="todoitem" craate:text="{created_at}" onDblclick="doEdit" onSwipe="doDelete" onReturn="doEdited"/>
 				</ItemTemplate>
 			</Templates>
 			<ListSection dataCollection="todo" dataTransform="doTransform" dataFilter="doFilter">
