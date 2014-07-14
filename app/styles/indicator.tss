@@ -1,25 +1,17 @@
 
-/*
-"indicator": {
-	opacity: 0.0
-}
-*/
-
 ".container" : {
 	width: 160, height: 160,
-	borderRadius: 8, backgroundColor: '#000',
-  
+	borderRadius: 8,
+	backgroundColor: '#000',
 }
 
-
 "#ind": {
-	top: 0,
-	left: 0,
+	top: 0, left: 0,
 	width: Ti.UI.FILL, height: Ti.UI.FILL,
 	color: '#ffffff',
-	}
+}
 
-"#ind[platform=iphone]": {
+"#ind[platform=ios]": {
 	style: Ti.UI.iPhone.ActivityIndicatorStyle.BIG,
 }
 

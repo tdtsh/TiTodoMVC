@@ -1,33 +1,42 @@
 (function(tirequire,__dirname,__filename){module.id=__filename;module.loaded=false;module.filename=__filename;var require=tirequire("node_modules/ti-commonjs/lib/ti-commonjs")(__dirname,module);module.require=require;function Controller() {
-    function __alloyId15(e) {
+    function __alloyId17(e) {
         if (e && e.fromAdapter) return;
-        var opts = __alloyId15.opts || {};
-        var models = doFilter(__alloyId14);
+        var opts = __alloyId17.opts || {};
+        var models = doFilter(__alloyId16);
         var len = models.length;
-        var __alloyId10 = [];
+        var __alloyId12 = [];
         for (var i = 0; len > i; i++) {
-            var __alloyId11 = models[i];
-            __alloyId11.__transform = doTransform(__alloyId11);
-            var __alloyId13 = {
+            var __alloyId13 = models[i];
+            __alloyId13.__transform = doTransform(__alloyId13);
+            var __alloyId15 = {
                 properties: {
                     height: 44,
                     selectionStyle: Ti.UI.iPhone.ListViewCellSelectionStyle.NONE
                 },
                 template: "todolist",
+                create: {
+                    text: "undefined" != typeof __alloyId13.__transform["timestamp"] ? __alloyId13.__transform["timestamp"] : __alloyId13.get("timestamp")
+                },
                 done: {
-                    todoId: "undefined" != typeof __alloyId11.__transform["id"] ? __alloyId11.__transform["id"] : __alloyId11.get("id"),
-                    color: "undefined" != typeof __alloyId11.__transform["done"] ? __alloyId11.__transform["done"] : __alloyId11.get("done")
+                    todoId: "undefined" != typeof __alloyId13.__transform["id"] ? __alloyId13.__transform["id"] : __alloyId13.get("id"),
+                    color: "undefined" != typeof __alloyId13.__transform["done"] ? __alloyId13.__transform["done"] : __alloyId13.get("done")
                 },
                 todo: {
-                    todoId: "undefined" != typeof __alloyId11.__transform["id"] ? __alloyId11.__transform["id"] : __alloyId11.get("id"),
-                    value: "undefined" != typeof __alloyId11.__transform["todo"] ? __alloyId11.__transform["todo"] : __alloyId11.get("todo")
+                    todoId: "undefined" != typeof __alloyId13.__transform["id"] ? __alloyId13.__transform["id"] : __alloyId13.get("id"),
+                    value: "undefined" != typeof __alloyId13.__transform["todo"] ? __alloyId13.__transform["todo"] : __alloyId13.get("todo")
                 }
             };
-            __alloyId10.push(__alloyId13);
+            __alloyId12.push(__alloyId15);
         }
-        opts.animation ? $.__views.__alloyId9.setItems(__alloyId10, opts.animation) : $.__views.__alloyId9.setItems(__alloyId10);
+        opts.animation ? $.__views.__alloyId11.setItems(__alloyId12, opts.animation) : $.__views.__alloyId11.setItems(__alloyId12);
     }
     function todofetch() {
+        var indicator = Alloy.createController("indicator", {
+            message: "loading..."
+        });
+        indicator.trigger("show", {
+            parent: $.window
+        });
         todo.fetch({
             success: function(_collection) {
                 var itemsleft = 0;
@@ -45,12 +54,17 @@
                 $.window.applyProperties({
                     title: L("todos") + " - " + itemsleft + " " + L("items_left")
                 });
+                indicator.trigger("hide");
+            },
+            error: function() {
+                indicator.trigger("hide");
             }
         });
     }
     function doTransform(_model) {
         var json = _model.toJSON();
         json.done = 0 === parseInt(json.done, 10) ? "#d9d9d9" : "#85ada7";
+        json.timestamp = "0000/00/00 00:00" !== json.updated_at ? json.updated_at : json.created_at;
         return json;
     }
     function doFilter(_collection) {
@@ -106,7 +120,7 @@
         var model = todo.get(e.source.todoId);
         model.set({
             todo: e.source.getValue(),
-            updated_at: moment().format("YYYY-MM-DD HH:mm:ss")
+            updated_at: moment().format("YYYY/MM/DD HH:mm")
         });
         model.save(null, {
             success: function() {
@@ -176,6 +190,22 @@
     var __alloyId4 = [];
     var __alloyId6 = {
         type: "Ti.UI.Label",
+        bindId: "create",
+        properties: {
+            top: 0,
+            right: 8,
+            width: Ti.UI.SIZE,
+            height: Ti.UI.SIZE,
+            color: "glay",
+            font: {
+                fontSize: "10sp"
+            },
+            bindId: "create"
+        }
+    };
+    __alloyId4.push(__alloyId6);
+    var __alloyId8 = {
+        type: "Ti.UI.Label",
         bindId: "done",
         properties: {
             top: 0,
@@ -193,8 +223,8 @@
             click: doToggle
         }
     };
-    __alloyId4.push(__alloyId6);
-    var __alloyId8 = {
+    __alloyId4.push(__alloyId8);
+    var __alloyId10 = {
         type: "Ti.UI.TextField",
         bindId: "todo",
         properties: {
@@ -214,7 +244,7 @@
             "return": doEdited
         }
     };
-    __alloyId4.push(__alloyId8);
+    __alloyId4.push(__alloyId10);
     var __alloyId3 = {
         properties: {
             name: "todolist"
@@ -222,13 +252,13 @@
         childTemplates: __alloyId4
     };
     __alloyId1["todolist"] = __alloyId3;
-    $.__views.__alloyId9 = Ti.UI.createListSection({
-        id: "__alloyId9"
+    $.__views.__alloyId11 = Ti.UI.createListSection({
+        id: "__alloyId11"
     });
-    var __alloyId14 = Alloy.Collections["todo"] || todo;
-    __alloyId14.on("fetch destroy change add remove reset", __alloyId15);
-    var __alloyId16 = [];
-    __alloyId16.push($.__views.__alloyId9);
+    var __alloyId16 = Alloy.Collections["todo"] || todo;
+    __alloyId16.on("fetch destroy change add remove reset", __alloyId17);
+    var __alloyId18 = [];
+    __alloyId18.push($.__views.__alloyId11);
     $.__views.todos = Ti.UI.createListView({
         top: 0,
         right: 0,
@@ -237,7 +267,7 @@
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#fcfcfc",
-        sections: __alloyId16,
+        sections: __alloyId18,
         templates: __alloyId1,
         headerView: $.__views.header,
         id: "todos",
@@ -253,25 +283,25 @@
         id: "footer"
     });
     $.__views.window.add($.__views.footer);
-    var __alloyId18 = [];
-    var __alloyId19 = {
+    var __alloyId20 = [];
+    var __alloyId21 = {
         title: L("label_all"),
         ns: "Alloy.Abstract"
     };
-    __alloyId18.push(__alloyId19);
-    var __alloyId20 = {
+    __alloyId20.push(__alloyId21);
+    var __alloyId22 = {
         title: L("label_active"),
         ns: "Alloy.Abstract"
     };
-    __alloyId18.push(__alloyId20);
-    var __alloyId21 = {
+    __alloyId20.push(__alloyId22);
+    var __alloyId23 = {
         title: L("label_completed"),
         ns: "Alloy.Abstract"
     };
-    __alloyId18.push(__alloyId21);
+    __alloyId20.push(__alloyId23);
     $.__views.tab = Ti.UI.iOS.createTabbedBar({
         index: 0,
-        labels: __alloyId18,
+        labels: __alloyId20,
         id: "tab"
     });
     $.__views.footer.add($.__views.tab);
@@ -282,7 +312,7 @@
     });
     $.__views.index && $.addTopLevelView($.__views.index);
     exports.destroy = function() {
-        __alloyId14.off("fetch destroy change add remove reset", __alloyId15);
+        __alloyId16.off("fetch destroy change add remove reset", __alloyId17);
     };
     _.extend($, $.__views);
     var lodash = require("lodash"), moment = require("moment");
